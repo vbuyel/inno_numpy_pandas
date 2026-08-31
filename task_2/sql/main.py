@@ -27,7 +27,7 @@ class Application:
     def _build_pipeline(self, connection: psycopg.Connection) -> BomPipeline:
         factory = ReaderFactory((CsvReader(), ExcelReader()))
         loader = BomLoader(factory)
-        repository = PostgresBomRepository(connection, self._config.schema_path)
+        repository = PostgresBomRepository(connection)
         aggregator = BomAggregationService(repository)
         exploder = BomExplosionService(repository)
         return BomPipeline(loader, repository, aggregator, exploder)

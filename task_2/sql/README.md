@@ -11,8 +11,7 @@ python3 -m pip install -r task_2/sql/requirements.txt
 python3 -m task_2.sql.main
 ```
 
-Configuration is loaded automatically from `task_2/sql/.env`. Relative
-`SCHEMA_PATH` values are resolved from the same directory.
+Configuration is loaded automatically from `task_2/sql/.env`.
 
 Pass another input file or save the report as CSV:
 
@@ -34,6 +33,6 @@ components, and tracks visited materials to prevent cycles.
 - `config.py`: immutable application configuration and source schema.
 - `loader.py`: extensible CSV/Excel readers and source cleaning.
 - `repository.py`: PostgreSQL persistence and report queries.
+- `queries.py`: individual PostgreSQL DDL and view statements.
 - `services.py`: aggregation, explosion, and pipeline use cases.
 - `main.py`: dependency composition and command-line interface.
-- `schema.sql`: PostgreSQL tables, indexes, and report views.

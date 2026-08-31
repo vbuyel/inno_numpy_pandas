@@ -2,15 +2,15 @@
 
 from .config import AppConfig
 from .loader import BomLoader
-from .repository import BomRepository, PostgresBomRepository
+from .repository import AbstractBomRepository, PostgresBomRepository
 from .services import BomAggregationService, BomExplosionService, BomPipeline
 
 __all__ = [
     "AppConfig",
+    "AbstractBomRepository",
     "BomAggregationService",
     "BomExplosionService",
     "BomLoader",
     "BomPipeline",
-    "BomRepository",
     "PostgresBomRepository",
 ]

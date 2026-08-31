@@ -3,7 +3,7 @@ from typing import Protocol
 
 import pandas as pd
 
-from .repository import BomRepository
+from .repository import AbstractBomRepository
 
 
 class SourceLoader(Protocol):
@@ -12,7 +12,7 @@ class SourceLoader(Protocol):
 
 
 class BomAggregationService:
-    def __init__(self, repository: BomRepository):
+    def __init__(self, repository: AbstractBomRepository):
         self._repository = repository
 
     def aggregate_bom_to_year(self) -> pd.DataFrame:
@@ -20,7 +20,7 @@ class BomAggregationService:
 
 
 class BomExplosionService:
-    def __init__(self, repository: BomRepository):
+    def __init__(self, repository: AbstractBomRepository):
         self._repository = repository
 
     def explode_fin_material(
@@ -34,7 +34,7 @@ class BomExplosionService:
 
 class BomPipeline:
     def __init__(
-        self, loader: SourceLoader, repository: BomRepository,
+        self, loader: SourceLoader, repository: AbstractBomRepository,
         aggregator: BomAggregationService, exploder: BomExplosionService,
     ):
         self._loader = loader

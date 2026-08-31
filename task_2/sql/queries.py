@@ -1,6 +1,7 @@
-DROP VIEW IF EXISTS bom_explosion;
-DROP VIEW IF EXISTS bom_annual;
+DROP_EXPLOSION_VIEW = "DROP VIEW IF EXISTS bom_explosion"
+DROP_ANNUAL_VIEW = "DROP VIEW IF EXISTS bom_annual"
 
+CREATE_SOURCE_TABLE = """
 CREATE TABLE IF NOT EXISTS bom_source (
     year integer NOT NULL,
     month integer NOT NULL CHECK (month BETWEEN 1 AND 12),
@@ -13,13 +14,10 @@ CREATE TABLE IF NOT EXISTS bom_source (
     component_material_release_type text NOT NULL,
     component_material_quantity numeric NOT NULL,
     plant_id text NOT NULL
-);
+)
+"""
 
-CREATE INDEX IF NOT EXISTS bom_source_material_idx
-    ON bom_source (plant_id, year, produced_material);
-CREATE INDEX IF NOT EXISTS bom_source_fin_idx
-    ON bom_source (produced_material_release_type, plant_id, year);
-
+CREATE_REPORT_TABLE = """
 CREATE TABLE IF NOT EXISTS bom_report (
     plant text NOT NULL,
     fin_material_id text NOT NULL,
@@ -35,11 +33,25 @@ CREATE TABLE IF NOT EXISTS bom_report (
     component_material_production_type integer,
     component_consumption_quantity numeric NOT NULL,
     year integer NOT NULL
-);
+)
+"""
 
+CREATE_SOURCE_MATERIAL_INDEX = """
+CREATE INDEX IF NOT EXISTS bom_source_material_idx
+ON bom_source (plant_id, year, produced_material)
+"""
+
+CREATE_SOURCE_FIN_INDEX = """
+CREATE INDEX IF NOT EXISTS bom_source_fin_idx
+ON bom_source (produced_material_release_type, plant_id, year)
+"""
+
+CREATE_REPORT_INDEX = """
 CREATE INDEX IF NOT EXISTS bom_report_lookup_idx
-    ON bom_report (plant, year, fin_material_id);
+ON bom_report (plant, year, fin_material_id)
+"""
 
+CREATE_ANNUAL_VIEW = """
 CREATE VIEW bom_annual AS
 SELECT
     plant_id,
@@ -56,8 +68,10 @@ FROM bom_source
 GROUP BY
     plant_id, year, produced_material, produced_material_production_type,
     produced_material_release_type, component_material,
-    component_material_production_type, component_material_release_type;
+    component_material_production_type, component_material_release_type
+"""
 
+CREATE_EXPLOSION_VIEW = """
 CREATE VIEW bom_explosion AS
 WITH RECURSIVE roots AS (
     SELECT DISTINCT
@@ -125,4 +139,17 @@ SELECT DISTINCT
     component_material_production_type,
     component_consumption_quantity,
     year
-FROM hierarchy;
+FROM hierarchy
+"""
+
+SCHEMA_QUERIES = (
+    DROP_EXPLOSION_VIEW,
+    DROP_ANNUAL_VIEW,
+    CREATE_SOURCE_TABLE,
+    CREATE_REPORT_TABLE,
+    CREATE_SOURCE_MATERIAL_INDEX,
+    CREATE_SOURCE_FIN_INDEX,
+    CREATE_REPORT_INDEX,
+    CREATE_ANNUAL_VIEW,
+    CREATE_EXPLOSION_VIEW,
+)

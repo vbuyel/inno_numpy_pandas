@@ -1,39 +1,45 @@
-from pathlib import Path
-from typing import Protocol
+from abc import ABC, abstractmethod
 
 import pandas as pd
 import psycopg
 
 from .config import SOURCE_COLUMNS
+from .queries import SCHEMA_QUERIES
 
 
-class BomRepository(Protocol):
+class AbstractBomRepository(ABC):
+    @abstractmethod
     def initialize_database(self) -> None:
         pass
 
+    @abstractmethod
     def replace_source(self, frame: pd.DataFrame) -> None:
         pass
 
+    @abstractmethod
     def build_bom_index(self) -> None:
         pass
 
+    @abstractmethod
     def aggregate_bom_to_year(self) -> pd.DataFrame:
         pass
 
+    @abstractmethod
     def explode_fin_material(self, plant: str, year: int, material: str) -> pd.DataFrame:
         pass
 
+    @abstractmethod
     def explode_all(self) -> pd.DataFrame:
         pass
 
 
-class PostgresBomRepository:
-    def __init__(self, connection: psycopg.Connection, schema_path: Path):
+class PostgresBomRepository(AbstractBomRepository):
+    def __init__(self, connection: psycopg.Connection):
         self._connection = connection
-        self._schema_path = schema_path
 
     def initialize_database(self) -> None:
-        self._connection.execute(self._schema_path.read_text())
+        for query in SCHEMA_QUERIES:
+            self._connection.execute(query)
 
     def replace_source(self, frame: pd.DataFrame) -> None:
         columns = ", ".join(SOURCE_COLUMNS)

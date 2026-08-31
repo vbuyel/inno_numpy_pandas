@@ -26,7 +26,6 @@ QUANTITY_COLUMNS = [
 @dataclass(frozen=True)
 class AppConfig:
     database_url: str
-    schema_path: Path
 
     @classmethod
     def from_environment(cls) -> "AppConfig":
@@ -35,7 +34,4 @@ class AppConfig:
         database_url = os.getenv("DATABASE_URL")
         if not database_url:
             raise RuntimeError("DATABASE_URL is not configured")
-        schema_value = os.getenv("SCHEMA_PATH", "schema.sql")
-        schema_path = Path(schema_value)
-        schema_path = schema_path if schema_path.is_absolute() else base_path / schema_path
-        return cls(database_url, schema_path)
+        return cls(database_url)
