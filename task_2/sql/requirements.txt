@@ -1,0 +1,5 @@
+pandas
+psycopg[binary]
+openpyxl
+xlrd
+python-dotenv
