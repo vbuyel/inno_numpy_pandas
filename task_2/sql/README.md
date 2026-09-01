@@ -33,6 +33,7 @@ components, and tracks visited materials to prevent cycles.
 - `config.py`: immutable application configuration and source schema.
 - `loader.py`: extensible CSV/Excel readers and source cleaning.
 - `repository.py`: PostgreSQL persistence and report queries.
-- `queries.py`: individual PostgreSQL DDL and view statements.
+- `queries.py`: loads PostgreSQL DDL and view statements from `statements/`.
+- `statements/`: one `.sql` file per schema query.
 - `services.py`: aggregation, explosion, and pipeline use cases.
 - `main.py`: dependency composition and command-line interface.
