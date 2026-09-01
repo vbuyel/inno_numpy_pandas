@@ -2,7 +2,7 @@ CREATE VIEW bom_explosion AS
 WITH RECURSIVE roots AS (
     SELECT DISTINCT
         plant_id AS plant,
-        year,
+        year AS fin_year,
         produced_material AS fin_material_id,
         produced_material_release_type AS fin_material_release_type,
         produced_material_production_type AS fin_material_production_type,
@@ -14,7 +14,7 @@ WITH RECURSIVE roots AS (
 ),
 hierarchy AS (
     SELECT
-        r.plant, r.year, r.fin_material_id, r.fin_material_release_type,
+        r.plant, r.fin_year, r.fin_material_id, r.fin_material_release_type,
         r.fin_material_production_type, r.fin_production_quantity,
         b.produced_material AS prod_material_id,
         b.produced_material_release_type AS prod_material_release_type,
@@ -28,14 +28,14 @@ hierarchy AS (
     FROM roots r
     JOIN bom_annual b
       ON b.plant_id = r.plant
-     AND b.year = r.year
+     AND b.year = r.fin_year
      AND b.produced_material = r.first_material_id
     WHERE r.first_material_release_type IN ('FIN', 'PROD')
 
     UNION ALL
 
     SELECT
-        h.plant, h.year, h.fin_material_id, h.fin_material_release_type,
+        h.plant, h.fin_year, h.fin_material_id, h.fin_material_release_type,
         h.fin_material_production_type, h.fin_production_quantity,
         b.produced_material, b.produced_material_release_type,
         b.produced_material_production_type, b.produced_material_quantity,
@@ -45,7 +45,7 @@ hierarchy AS (
     FROM hierarchy h
     JOIN bom_annual b
       ON b.plant_id = h.plant
-     AND b.year = h.year
+     AND b.year = h.fin_year
      AND b.produced_material = h.component_id
     WHERE h.component_material_release_type IN ('FIN', 'PROD')
       AND NOT b.produced_material = ANY(h.path)
@@ -64,5 +64,5 @@ SELECT DISTINCT
     component_material_release_type,
     component_material_production_type,
     component_consumption_quantity,
-    year
+    fin_year AS year
 FROM hierarchy
